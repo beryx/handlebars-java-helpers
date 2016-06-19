@@ -1,0 +1,16 @@
+= Handlebars.java Helpers
+:author: Serban Iordache
+:revnumber: {project-version}
+:toc: left
+:toclevels: 3
+:data-uri:
+:caption:
+:last-update-label!:
+
+:leveloffset: +1
+
+include::introduction.adoc[]
+include::getting_started.adoc[]
+include::helpers.adoc[]
+
+:leveloffset: -1
