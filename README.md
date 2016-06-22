@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/beryx/handlebars-java-helpers/blob/master/LICENSE)
+[![Build Status](https://img.shields.io/travis/beryx/handlebars-java-helpers/master.svg?label=Build)](https://travis-ci.org/beryx/handlebars-java-helpers)
 ## Handlebars.java Helpers ##
 
 This library provides various helpers for adding logic to [Handlebars.java](https://github.com/jknack/handlebars.java).
