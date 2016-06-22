@@ -79,7 +79,7 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.6
 group = 'org.beryx'
 version = hbsHelpersVersion
 
@@ -116,9 +116,9 @@ dependencies {
   compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.20'
   compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
   compile 'com.github.jknack:handlebars:4.0.5'
-  
+
   provided 'com.google.code.findbugs:findbugs-annotations:3.0.1'
-  
+
   testCompile 'org.yaml:snakeyaml:1.17'
   testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
       exclude module: 'groovy-all'
@@ -126,7 +126,7 @@ dependencies {
   testCompile 'cglib:cglib-nodep:3.2.1'
   testCompile 'org.objenesis:objenesis:2.2'
   testCompile('com.athaydes:spock-reports:1.2.10') { transitive = false}
-  
+
 }
 
 sourceSets.main.compileClasspath += configurations.provided
@@ -348,22 +348,22 @@ gradle.taskGraph.whenReady { taskGraph ->
 bintray {
     user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : "unknownUser"
     key =  project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : "unknownKey"
-    publications = ["handlebars-java-helpers"]
+    publications = ["hbsHelpers"]
     pkg {
         repo = 'maven'
         name = 'handlebars-java-helpers'
         userOrg = 'beryx'
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/beryx/handlebars-java-helpers.git'
-        
+
         version {
                 name = hbsHelpersVersion
                 desc = "Handlebars.java Helpers $hbsHelpersVersion"
-                released  = new Date().format("yyyy-MM-dd'T'HH:mm:ss.SSSZZ") 
+                released  = new Date().format("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
                 vcsTag = hbsHelpersVersion
                 gpg {
                     sign = true
                 }
-        }        
+        }
     }
 }

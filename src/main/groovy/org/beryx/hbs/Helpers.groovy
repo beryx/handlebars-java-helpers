@@ -21,13 +21,23 @@ import com.github.jknack.handlebars.Helper
 import com.github.jknack.handlebars.Options
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.FromAbstractTypeMethods
+import org.apache.commons.lang3.LocaleUtils
 
 enum Helpers implements Helper {
     DEF ("def", { varName, options ->
         Context ctx = options.context
-        def val = options.fn()
+        def val = (options.params.size() > 0) ? options.params[0] : options.fn()
         ctx.combine(varName, val)
         options.buffer()
+    }),
+
+    DEFAULT ("default", { value, options ->
+        if(!(value instanceof Boolean) && Handlebars.Utils.isEmpty(value)) {
+            value = options.params[0]
+        }
+        Options.Buffer buffer = options.buffer()
+        buffer.append(String.valueOf(value))
+        buffer
     }),
 
     LENGTH ("length", { list, options ->
@@ -62,6 +72,34 @@ enum Helpers implements Helper {
             }
         }
         buffer.append(cmp() ? 'true' : 'false')
+        buffer
+    }),
+
+    MATH ("math", { value, options ->
+        Options.Buffer buffer = options.buffer()
+        def op = options.params[0]
+        def operand1 = asNumber(value)
+        def operand2 = asNumber(options.params[1])
+
+        def cmp = {
+            switch (op) {
+                case '+': return operand1 + operand2
+                case '-': return operand1 - operand2
+                case '*': return operand1 * operand2
+                case '/': return operand1 / operand2
+                case '%': return operand1 % operand2
+                case '**': return Math.pow(operand1, operand2)
+            }
+        }
+        int decimals = options.hash('decimals', -1)
+        if(decimals < 0) {
+            buffer.append(cmp().toString())
+        } else {
+            def format = "%.${decimals}f"
+            String localeStr = options.hash("locale", Locale.getDefault().toString());
+            Locale locale = LocaleUtils.toLocale(localeStr);
+            buffer.append(String.format(locale, format, cmp() as double))
+        }
         buffer
     }),
 
@@ -131,7 +169,11 @@ enum Helpers implements Helper {
         closure.call(context, options)
     }
 
-    static boolean asBoolean(value) {
+    static void register(Handlebars handlebars) {
+        Helpers.values().each { helper -> handlebars.registerHelper(helper.helperName, helper)}
+    }
+
+    private static boolean asBoolean(value) {
         if(value instanceof CharSequence) {
             if('true'.equalsIgnoreCase(value.toString())) return true
             if('false'.equalsIgnoreCase(value.toString())) return false
@@ -139,7 +181,7 @@ enum Helpers implements Helper {
         !Handlebars.Utils.isEmpty(value)
     }
 
-    static boolean isNumber(value) {
+    private static boolean isNumber(value) {
         if(value == null) return false
         if(value instanceof Number) return true
         try {
@@ -147,6 +189,16 @@ enum Helpers implements Helper {
             return true
         } catch (e) {
             return false
+        }
+    }
+
+    private static Number asNumber(value) {
+        if(value == null) return null
+        if(value instanceof Number) return value
+        try {
+            return new Long(value.toString())
+        } catch (e) {
+            return new Double(value.toString())
         }
     }
 }

@@ -15,24 +15,15 @@
  */
 package org.beryx.hbs
 
-import com.github.jknack.handlebars.EscapingStrategy
-import com.github.jknack.handlebars.Handlebars
-import com.github.jknack.handlebars.Template
-import org.yaml.snakeyaml.Yaml
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @Unroll
-class HelpersSpec extends Specification {
-    def setupSpec() {
-        String.metaClass.stripAll = { ->
-            delegate.stripIndent().trim().replaceAll('(?m)^\\s*$\\n', '')
-        }
-    }
-
+class HelpersSpec extends Specification implements TestUtil {
     def context = '''
         company: Acme Corporation
         location: Grand Canyon
+        email:
         employees: 77
         managers: 7
         private: false
@@ -54,23 +45,13 @@ class HelpersSpec extends Specification {
             price: 10
         '''.stripIndent()
 
-    String merge(String template, String context) {
-        Handlebars handlebars = new Handlebars()
-                .with(EscapingStrategy.NOOP)
-                .with(new StringTemplateLoader())
-        Helpers.values().each { helper -> handlebars.registerHelper(helper.helperName, helper)}
-        Template tmpl = handlebars.compile(template)
-        Yaml yaml = new Yaml()
-        def ctx = yaml.load(context)
-        tmpl.apply(ctx).stripAll()
-    }
-
     def "should define variables"() {
         given:
         def template = '''
             {{#each product}}
             {{#def 'prd'}}{{name}}-{{price}}{{/def}}
-            product-{{@index}}: {{prd}}
+            {{def 'missing' (not available) }}
+            product-{{@index}}: {{prd}}, missing: {{missing}}
             {{/each}}
             out of scope: '{{prd}}'
         '''
@@ -79,30 +60,87 @@ class HelpersSpec extends Specification {
         def merged = merge(template, context)
 
         then:
-        println merged
         merged == '''
-            product-0: dynamite-15
-            product-1: rocket-200
-            product-2: rubber band-10
+            product-0: dynamite-15, missing: false
+            product-1: rocket-200, missing: true
+            product-2: rubber band-10, missing: true
             out of scope: ''
         '''.stripAll()
     }
 
-    def "should compute the length of a list"() {
+    def "should use the default value"() {
         given:
-        def template = '''
-            len = {{length product}}
-        '''
+        def template = "{{default $value $defValue}}"
 
         when:
         def merged = merge(template, context)
 
         then:
-        println merged
+        merged == "$res"
+
+        where:
+        value       | defValue            | res
+        "location"  | "'Desert'"          | "Grand Canyon"
+        "address"   | "'Desert'"          | "Desert"
+        "email"     | "'coyote@acme.com'" | "coyote@acme.com"
+        "employees" | 55                  | 77
+        "customers" | 1                   | 1
+        "private"   | true                | false
+        "public"    | true                | true
+    }
+
+    def "should compute the length of a list"() {
+        given:
+        def template = 'len = {{length product}}'
+
+        when:
+        def merged = merge(template, context)
+
+        then:
         merged == 'len = 3'
     }
 
-    def "string compare should evaluate to #res: company #op location"() {
+    def "math expression should evaluate to #res: employees '#op' managers"() {
+        given:
+        def template = "$op : {{math employees '$op' managers}}"
+
+        when:
+        def merged = merge(template, context)
+
+        then:
+        merged == "$op : $res"
+
+        where:
+        op   | res
+        '+'  | 84
+        '-'  | 70
+        '*'  | 539
+        '/'  | 11
+        '%'  | 0
+        '**' | '1.6048523266853E13'
+    }
+
+    def "should format the result of math expression as #res: #expr"() {
+        given:
+        def template = "{{math $expr}}"
+
+        when:
+        def merged = merge(template, context)
+
+        then:
+        merged == "$res"
+
+        where:
+        expr   | res
+        "5 '+' 3 decimals=1 locale='us'" | '8.0'
+        "5 '+' 3 decimals=3 locale='de'" | '8,000'
+        "5 '/' 3 decimals=0" | '2'
+        "5 '/' 3 decimals=3 locale='us'" | '1.667'
+        "5 '/' 3 decimals=3 locale='us'" | '1.667'
+        "77 '**' 7 decimals=0" | '16048523266853'
+    }
+
+    def "string compare should evaluate to #res: company '#op' location"() {
         given:
         def template = "$op : {{compare company '$op' location}}"
 
@@ -122,7 +160,7 @@ class HelpersSpec extends Specification {
         '>=' | false
     }
 
-    def "numeric compare should evaluate to #res: employees #op managers"() {
+    def "numeric compare should evaluate to #res: employees '#op' managers"() {
         given:
         def template = "$op : {{compare employees '$op' managers}}"
 

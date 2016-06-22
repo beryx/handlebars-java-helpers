@@ -1,23 +1,283 @@
-[[user_guide]]
+[[helpers]]
 = Helpers
 
-== DEF
-TBD
 
-== LENGTH
-TBD
+== def
+Defines a Handlebars variable.
 
-== COMPARE
-TBD
+There are two ways of using [purple]##def##: as a basic or as a block helper.
 
-== NOT
-TBD
+*Basic syntax*: {{[purple]##def## '_varName_' _varValue_}} +
+*Block syntax*: {{[purple]###def## '_varName_'}} _varValue_ {{/[purple]##def##}}
 
-== AND
-TBD
+*Example:*
 
-== OR
-TBD
+.YAML Model
+----
+user: jsmith
+domain: example.com
+offline: false
+----
 
-== AS_JAVA_ID
-TBD
+.Template
+----
+{{def 'online' (not offline)}}
+{{#def 'email'}}{{user}}@{{domain}}{{/def}}
+Online: {{online}}
+You can contact me at {{email}}.
+----
+
+.Result
+----
+Online: true
+You can contact me at jsmith@example.com.
+----
+
+
+== default
+Returns the first value, if it is defined and not empty, or the default value otherwise.
+
+*Syntax*: {{[purple]##default## _value_ _defaultValue_}}
+
+*Example:*
+
+.YAML Model
+----
+bonus: 100
+----
+
+.Template
+----
+bonus = {{default bonus 0}} points
+penalty = {{default penalty 0}} points
+----
+
+.Result
+----
+bonus = 100 points
+penalty = 0 points
+----
+
+
+== length
+Returns the number of elements in a collection.
+
+*Syntax*: {{[purple]##length## _list_}}
+
+*Example:*
+
+.YAML Model
+----
+developers:
+  - name: Alice
+  - name: Brenda
+  - name: Colin
+----
+
+.Template
+----
+Team size: {{length developers}} developers
+----
+
+.Result
+----
+Team size: 3 developers
+----
+
+
+== math
+Computes the result of an arithmetic operation.
+
+*Syntax*: {{[purple]##math## _operand1_ _'operator'_ _operand2_  {startsb}[purple]##decimals##: _dec_ {startsb}[purple]##locale##: _loc_{endsb}{endsb}}}
+
+Supported operators: `+`, `-`, `*`, `/`, `%`, `**`.
+
+
+*Example:*
+
+.YAML Model
+----
+amount: 1500
+bonus: 100
+penalty: 30
+----
+
+.Template
+----
+Your score: {{math (math amount '+' bonus) '-' penalty}} points
+----
+
+.Result
+----
+Your score: 1570 points
+----
+
+You can customize the format of the result by specifying the number of decimals and the locale.
+
+*Example:*
+
+.YAML Model
+----
+amount: 250
+rate: 0.15
+----
+
+.Template
+----
+interest: {{math amount '*' rate decimals=2 locale='de'}} EUR
+----
+
+.Result
+----
+interest: 37,50 EUR
+----
+
+
+== compare
+Compares two operands using the specified relational operator.
+
+*Syntax*: {{[purple]##compare## _operand1_ _'operator'_ _operand2_}}
+
+Supported relational operators: `==`, `!=`, `<`, `<=`, `>`, `>=`.
+
+
+*Example:*
+
+.YAML Model
+----
+bonus: 100
+penalty: 30
+----
+
+.Template
+----
+Exceeded allowed penalty: {{compare penalty '>=' 50}}
+{{#if (compare bonus '>' penalty)}}
+You won!
+{{else}}
+Game over
+{{/if}}
+----
+
+.Result
+----
+Exceeded allowed penalty: false
+You won!
+----
+
+
+== not
+Returns the negated value of the operand.
+
+*Syntax*: {{[purple]##not## _value_}}
+
+*Example:*
+
+.YAML Model
+----
+offline: false
+----
+
+.Template
+----
+Online: {{not offline}}
+{{#if (not offline)}}
+Invite a friend to play with you!
+{{else}}
+Single-player mode.
+{{/if}}
+----
+
+.Result
+----
+Online: true
+Invite a friend to play with you!
+----
+
+
+== and
+Returns the logical _and_ of the operands.
+
+*Syntax*: {{[purple]##and## _val1_ _val2_ [_val3_ [...]] }}
+
+*Example:*
+
+.YAML Model
+----
+motorized: true
+aircraft: false
+wheels: 2
+----
+
+.Template
+----
+airliner: {{and motorized aircraft}}
+{{#if (and motorized (not aircraft) (compare wheels '==' 2))}}
+You won a motorcycle!
+{{else}}
+Sorry, we only offer motorcycles.
+{{/if}}
+----
+
+.Result
+----
+airliner: false
+You won a motorcycle!
+----
+
+== or
+Returns the logical _or_ of the operands.
+
+*Syntax*: {{[purple]##and## _val1_ _val2_ [_val3_ [...]] }}
+
+*Example:*
+
+.YAML Model
+----
+admin: false
+developer: true
+accessLevel: 2
+----
+
+.Template
+----
+committer: {{or admin developer}}
+{{#if (or admin developer (compare accessLevel '>=' 4))}}
+Click here to download the logs.
+{{else}}
+Sorry, you are not allowed to view the logs.
+{{/if}}
+----
+
+.Result
+----
+committer: true
+Click here to download the logs.
+----
+
+== asJavaId
+Converts a value to a valid Java identifier.
+
+*Syntax*: {{[purple]##asJavaId## _value_ {startsb}[purple]##camelCase##: _ccBool_{endsb} {startsb}[purple]##underscore##: _usBool_{endsb}}}
+
+You can control the format of the generated Java identifier by specifying the values of the boolean flags [purple]##camelCase## and [purple]##underscore##.
+The default values are: [purple]##camelCase## = true and [purple]##underscore## = false.
+
+*Example:*
+
+.YAML Model
+----
+service: byte-as-an-octet
+----
+
+.Template
+----
+serviceId: {{asJavaId service}}
+package: {{asJavaId service camelCase=false underscore=true}}
+----
+
+.Result
+----
+serviceId: byteAsAnOctet
+package: byte_as_an_octet
+----
