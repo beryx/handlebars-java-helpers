@@ -68,6 +68,33 @@ class HelpersSpec extends Specification implements TestUtil {
         '''.stripAll()
     }
 
+    def "ifb should interpret condition #cond as boolean value #res"() {
+        given:
+        def template = "{{#ifb $cond}}TRUE{{else}}FALSE{{/ifb}}"
+
+        when:
+        def merged = merge(template, context)
+
+        then:
+        merged == "$res"
+
+        where:
+        cond       | res
+        "'0.00'"   | "FALSE"
+        "false"  | "FALSE"
+        "'false'"  | "FALSE"
+        "true"   | "TRUE"
+        "'true'"   | "TRUE"
+        "0"   | "FALSE"
+        "'0'"   | "FALSE"
+        "'0.00'"   | "FALSE"
+        "1"   | "TRUE"
+        "'1'"   | "TRUE"
+        "-1"   | "TRUE"
+        "'-1'"   | "TRUE"
+        "'3.14'"   | "TRUE"
+    }
+
     def "should use the default value"() {
         given:
         def template = "{{default $value $defValue}}"

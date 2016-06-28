@@ -31,6 +31,15 @@ enum Helpers implements Helper {
         options.buffer()
     }),
 
+    IFB ("ifb", { value, options ->
+        Options.Buffer buffer = options.buffer()
+        if(isNumber(value)) {
+            value = asNumber(value)
+        }
+        buffer.append(asBoolean(value) ? options.fn() : options.inverse())
+        buffer
+    }),
+
     DEFAULT ("default", { value, options ->
         if(!(value instanceof Boolean) && Handlebars.Utils.isEmpty(value)) {
             value = options.params[0]

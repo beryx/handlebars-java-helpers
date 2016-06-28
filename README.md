@@ -16,7 +16,7 @@ and the following template:
 
 ```hbs
 {{def 'fifteenYear' (math birthYear '+' 15)}}
-{{#if (or
+{{#ifb (or
         (and
             (compare (math fifteenYear '%' 4) '==' 0)
             (compare (math fifteenYear '%' 100) '!=' 0)
@@ -25,7 +25,9 @@ and the following template:
        )
 }}
 Your fifteenth anniversary was in a leap year!
-{{/if}}
+{{else}}
+Your fifteenth anniversary was in a non-leap year!
+{{/ifb}}
 ```
 The resulting text will be:
 ```

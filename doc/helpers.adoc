@@ -34,6 +34,40 @@ You can contact me at jsmith@example.com.
 ----
 
 
+== ifb
+Conditionally renders a block.
+
+*Syntax*: {{[purple]###ifb## '_condition_'}} _text1_ {startsb}{{[purple]##else##}} _text2_{endsb} {{/[purple]##ifb##}}
+
+Unlike the built-in `if` helper, `ifb` tries to parse string conditions as boolean values.
+Moreover, if a string condition can be parsed as a number, its corresponding numerical value is evaluated as a boolean (0 is false, anything else is true).
+This is especially helpful when the condition is provided as a subexpression.
+
+*Example:*
+
+.YAML Model
+----
+offline: false
+value: 5
+----
+
+.Template
+----
+if : online = {{#if (not offline)}}YES{{else}}NO{{/if}}
+ifb: online = {{#ifb (not offline)}}YES{{else}}NO{{/ifb}}
+if : {{value}} is an {{#if (math value '%' 2)}}odd{{else}}even{{/if}} number
+ifb: {{value}} is an {{#ifb (math value '%' 2)}}odd{{else}}even{{/ifb}} number
+----
+
+.Result
+----
+if : online = YES
+ifb: online = NO
+if : 4 is an odd number
+ifb: 4 is an even number
+----
+
+
 == default
 Returns the first value, if it is defined and not empty, or the default value otherwise.
 
@@ -152,11 +186,11 @@ penalty: 30
 .Template
 ----
 Exceeded allowed penalty: {{compare penalty '>=' 50}}
-{{#if (compare bonus '>' penalty)}}
+{{#ifb (compare bonus '>' penalty)}}
 You won!
 {{else}}
 Game over
-{{/if}}
+{{/ifb}}
 ----
 
 .Result
@@ -181,11 +215,11 @@ offline: false
 .Template
 ----
 Online: {{not offline}}
-{{#if (not offline)}}
+{{#ifb (not offline)}}
 Invite a friend to play with you!
 {{else}}
 Single-player mode.
-{{/if}}
+{{/ifb}}
 ----
 
 .Result
@@ -212,11 +246,11 @@ wheels: 2
 .Template
 ----
 airliner: {{and motorized aircraft}}
-{{#if (and motorized (not aircraft) (compare wheels '==' 2))}}
+{{#ifb (and motorized (not aircraft) (compare wheels '==' 2))}}
 You won a motorcycle!
 {{else}}
 Sorry, we only offer motorcycles.
-{{/if}}
+{{/ifb}}
 ----
 
 .Result
@@ -242,11 +276,11 @@ accessLevel: 2
 .Template
 ----
 committer: {{or admin developer}}
-{{#if (or admin developer (compare accessLevel '>=' 4))}}
+{{#ifb (or admin developer (compare accessLevel '>=' 4))}}
 Click here to download the logs.
 {{else}}
 Sorry, you are not allowed to view the logs.
-{{/if}}
+{{/ifb}}
 ----
 
 .Result

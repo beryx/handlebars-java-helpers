@@ -16,10 +16,12 @@
 package org.beryx.hbs
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * Specifications of the examples used in the documentation
  */
+@Unroll
 class DocExamplesSpec extends Specification implements TestUtil {
     def "doc example: def"() {
         given:
@@ -42,6 +44,31 @@ class DocExamplesSpec extends Specification implements TestUtil {
         merged == '''
             Online: true
             You can contact me at jsmith@example.com.
+        '''.stripAll()
+    }
+
+    def "doc example: ifb"() {
+        given:
+        def ctx = '''
+            offline: true
+            value: 4
+        '''
+        def template = '''
+            if : online = {{#if (not offline)}}YES{{else}}NO{{/if}}
+            ifb: online = {{#ifb (not offline)}}YES{{else}}NO{{/ifb}}
+            if : {{value}} is an {{#if (math value '%' 2)}}odd{{else}}even{{/if}} number
+            ifb: {{value}} is an {{#ifb (math value '%' 2)}}odd{{else}}even{{/ifb}} number
+        '''
+
+        when:
+        def merged = merge(template, ctx)
+
+        then:
+        merged == '''
+            if : online = YES
+            ifb: online = NO
+            if : 4 is an odd number
+            ifb: 4 is an even number
         '''.stripAll()
     }
 
@@ -133,11 +160,11 @@ class DocExamplesSpec extends Specification implements TestUtil {
         '''
         def template = '''
             Exceeded allowed penalty: {{compare penalty '>=' 50}}
-            {{#if (compare bonus '>' penalty)}}
+            {{#ifb (compare bonus '>' penalty)}}
             You won!
             {{else}}
             Game over
-            {{/if}}
+            {{/ifb}}
         '''
 
         when:
@@ -157,11 +184,11 @@ class DocExamplesSpec extends Specification implements TestUtil {
         '''
         def template = '''
             Online: {{not offline}}
-            {{#if (not offline)}}
+            {{#ifb (not offline)}}
             Invite a friend to play with you!
             {{else}}
             Single-player mode.
-            {{/if}}
+            {{/ifb}}
         '''
 
         when:
@@ -184,11 +211,11 @@ class DocExamplesSpec extends Specification implements TestUtil {
         '''
         def template = '''
             airliner: {{and motorized aircraft}}
-            {{#if (and motorized (not aircraft) (compare wheels '==' 2))}}
+            {{#ifb (and motorized (not aircraft) (compare wheels '==' 2))}}
             You won a motorcycle!
             {{else}}
             Sorry, we only offer motorcycles.
-            {{/if}}
+            {{/ifb}}
         '''
 
         when:
@@ -211,11 +238,11 @@ class DocExamplesSpec extends Specification implements TestUtil {
         '''
         def template = '''
             committer: {{or admin developer}}
-            {{#if (or admin developer (compare accessLevel '>=' 4))}}
+            {{#ifb (or admin developer (compare accessLevel '>=' 4))}}
             Click here to download the logs.
             {{else}}
             Sorry, you are not allowed to view the logs.
-            {{/if}}
+            {{/ifb}}
         '''
 
         when:
@@ -250,14 +277,12 @@ class DocExamplesSpec extends Specification implements TestUtil {
     }
 
 
-    def "README example: leap year"() {
+    def "README example: the fifteenth anniversary of a person born in #year was in a #res year"() {
         given:
-        def ctx = '''
-            birthYear: 1997
-        '''
+        def ctx = "birthYear: $year"
         def template = '''
             {{def 'fifteenYear' (math birthYear '+' 15)}}
-            {{#if (or
+            {{#ifb (or
                     (and
                         (compare (math fifteenYear '%' 4) '==' 0)
                         (compare (math fifteenYear '%' 100) '!=' 0)
@@ -266,16 +291,26 @@ class DocExamplesSpec extends Specification implements TestUtil {
                    )
             }}
             Your fifteenth anniversary was in a leap year!
-            {{/if}}
+            {{else}}
+            Your fifteenth anniversary was in a non-leap year!
+            {{/ifb}}
         '''
 
         when:
         def merged = merge(template, ctx)
 
         then:
-        merged == '''
-            Your fifteenth anniversary was in a leap year!
-        '''.stripAll()
+        merged == """
+            Your fifteenth anniversary was in a $res year!
+        """.stripAll()
+
+        where:
+        year | res
+        1895 | 'non-leap'
+        1896 | 'non-leap'
+        1985 | 'leap'
+        1997 | 'leap'
+        1998 | 'non-leap'
     }
 
 }
