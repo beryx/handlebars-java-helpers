@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.3">
+<meta name="author" content="Serban Iordache">
+<title>Handlebars.java Helpers</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+   <!-- Histats.com  START  (aync)-->
+<script type="text/javascript">var _Hasync= _Hasync|| [];
+_Hasync.push(['Histats.start', '1,3473102,4,0,0,0,00010000']);
+_Hasync.push(['Histats.fasi', '1']);
+_Hasync.push(['Histats.track_hits', '']);
+(function() {
+var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+hs.src = ('//s10.histats.com/js15_as.js');
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+})();</script>
+<noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?3473102&101" alt="free html hit counter" border="0"></a></noscript>
+<!-- Histats.com  END  -->
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>Handlebars.java Helpers</h1>
+<div class="details">
+<span id="author" class="author">Serban Iordache</span><br>
+<span id="revnumber">version 0.1.2-SNAPSHOT</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#getting_started">Getting Started</a></li>
+<li><a href="#helpers">Helpers</a>
+<ul class="sectlevel2">
+<li><a href="#_def">def</a></li>
+<li><a href="#_ifb">ifb</a></li>
+<li><a href="#_default">default</a></li>
+<li><a href="#_length">length</a></li>
+<li><a href="#_math">math</a></li>
+<li><a href="#_compare">compare</a></li>
+<li><a href="#_not">not</a></li>
+<li><a href="#_and">and</a></li>
+<li><a href="#_or">or</a></li>
+<li><a href="#_asjavaid">asJavaId</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This library provides various <a href="https://github.com/jknack/handlebars.java">Handlebars.java</a> helpers</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="getting_started">Getting Started</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>handlebars-java-helpers is available in Maven Central and JCenter.</p>
+</div>
+<div class="listingblock">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="nowrap">&lt;dependency&gt;
+    &lt;groupId&gt;org.beryx&lt;/groupId&gt;
+    &lt;artifactId&gt;handlebars-java-helpers&lt;/artifactId&gt;
+    &lt;version&gt;0.1.2-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="nowrap">compile 'org.beryx:handlebars-java-helpers:0.1.2-SNAPSHOT'</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="helpers">Helpers</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_def">def</h3>
+<div class="paragraph">
+<p>Defines a Handlebars variable.</p>
+</div>
+<div class="paragraph">
+<p>There are two ways of using <span class="purple">def</span>: as a basic or as a block helper.</p>
+</div>
+<div class="paragraph">
+<p><strong>Basic syntax</strong>: {{<span class="purple">def</span> '<em>varName</em>' <em>varValue</em>}}<br>
+<strong>Block syntax</strong>: {{<span class="purple">#def</span> '<em>varName</em>'}} <em>varValue</em> {{/<span class="purple">def</span>}}</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>user: jsmith
+domain: example.com
+offline: false</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>{{def 'online' (not offline)}}
+{{#def 'email'}}{{user}}@{{domain}}{{/def}}
+Online: {{online}}
+You can contact me at {{email}}.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>Online: true
+You can contact me at jsmith@example.com.</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ifb">ifb</h3>
+<div class="paragraph">
+<p>Conditionally renders a block.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">#ifb</span> '<em>condition</em>'}} <em>text1</em> [{{<span class="purple">else</span>}} <em>text2</em>] {{/<span class="purple">ifb</span>}}</p>
+</div>
+<div class="paragraph">
+<p>Unlike the built-in <code>if</code> helper, <code>ifb</code> tries to parse string conditions as boolean values.
+Moreover, if a string condition can be parsed as a number, its corresponding numerical value is evaluated as a boolean (0 is false, anything else is true).
+This is especially helpful when the condition is provided as a subexpression.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>offline: false
+value: 5</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>if : online = {{#if (not offline)}}YES{{else}}NO{{/if}}
+ifb: online = {{#ifb (not offline)}}YES{{else}}NO{{/ifb}}
+if : {{value}} is an {{#if (math value '%' 2)}}odd{{else}}even{{/if}} number
+ifb: {{value}} is an {{#ifb (math value '%' 2)}}odd{{else}}even{{/ifb}} number</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>if : online = YES
+ifb: online = NO
+if : 4 is an odd number
+ifb: 4 is an even number</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_default">default</h3>
+<div class="paragraph">
+<p>Returns the first value, if it is defined and not empty, or the default value otherwise.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">default</span> <em>value</em> <em>defaultValue</em>}}</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>bonus: 100</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>bonus = {{default bonus 0}} points
+penalty = {{default penalty 0}} points</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>bonus = 100 points
+penalty = 0 points</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_length">length</h3>
+<div class="paragraph">
+<p>Returns the number of elements in a collection.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">length</span> <em>list</em>}}</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>developers:
+  - name: Alice
+  - name: Brenda
+  - name: Colin</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>Team size: {{length developers}} developers</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>Team size: 3 developers</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_math">math</h3>
+<div class="paragraph">
+<p>Computes the result of an arithmetic operation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">math</span> <em>operand1</em> <em>'operator'</em> <em>operand2</em>  [<span class="purple">decimals</span>: <em>dec</em> [<span class="purple">locale</span>: <em>loc</em>]]}}</p>
+</div>
+<div class="paragraph">
+<p>Supported operators: <code>+</code>, <code>-</code>, <code><strong></code>, <code>/</code>, <code>%</code>, <code></strong>*</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>amount: 1500
+bonus: 100
+penalty: 30</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>Your score: {{math (math amount '+' bonus) '-' penalty}} points</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>Your score: 1570 points</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can customize the format of the result by specifying the number of decimals and the locale.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>amount: 250
+rate: 0.15</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>interest: {{math amount '*' rate decimals=2 locale='de'}} EUR</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>interest: 37,50 EUR</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_compare">compare</h3>
+<div class="paragraph">
+<p>Compares two operands using the specified relational operator.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">compare</span> <em>operand1</em> <em>'operator'</em> <em>operand2</em>}}</p>
+</div>
+<div class="paragraph">
+<p>Supported relational operators: <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&#8656;</code>, <code>&gt;</code>, <code>&gt;=</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>bonus: 100
+penalty: 30</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>Exceeded allowed penalty: {{compare penalty '&gt;=' 50}}
+{{#ifb (compare bonus '&gt;' penalty)}}
+You won!
+{{else}}
+Game over
+{{/ifb}}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>Exceeded allowed penalty: false
+You won!</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_not">not</h3>
+<div class="paragraph">
+<p>Returns the negated value of the operand.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">not</span> <em>value</em>}}</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>offline: false</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>Online: {{not offline}}
+{{#ifb (not offline)}}
+Invite a friend to play with you!
+{{else}}
+Single-player mode.
+{{/ifb}}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>Online: true
+Invite a friend to play with you!</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_and">and</h3>
+<div class="paragraph">
+<p>Returns the logical <em>and</em> of the operands.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">and</span> <em>val1</em> <em>val2</em> [<em>val3</em> [&#8230;&#8203;]] }}</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>motorized: true
+aircraft: false
+wheels: 2</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>airliner: {{and motorized aircraft}}
+{{#ifb (and motorized (not aircraft) (compare wheels '==' 2))}}
+You won a motorcycle!
+{{else}}
+Sorry, we only offer motorcycles.
+{{/ifb}}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>airliner: false
+You won a motorcycle!</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_or">or</h3>
+<div class="paragraph">
+<p>Returns the logical <em>or</em> of the operands.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">and</span> <em>val1</em> <em>val2</em> [<em>val3</em> [&#8230;&#8203;]] }}</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>admin: false
+developer: true
+accessLevel: 2</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>committer: {{or admin developer}}
+{{#ifb (or admin developer (compare accessLevel '&gt;=' 4))}}
+Click here to download the logs.
+{{else}}
+Sorry, you are not allowed to view the logs.
+{{/ifb}}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>committer: true
+Click here to download the logs.</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_asjavaid">asJavaId</h3>
+<div class="paragraph">
+<p>Converts a value to a valid Java identifier.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">asJavaId</span> <em>value</em> [<span class="purple">camelCase</span>: <em>ccBool</em>] [<span class="purple">underscore</span>: <em>usBool</em>]}}</p>
+</div>
+<div class="paragraph">
+<p>You can control the format of the generated Java identifier by specifying the values of the boolean flags <span class="purple">camelCase</span> and <span class="purple">underscore</span>.
+The default values are: <span class="purple">camelCase</span> = true and <span class="purple">underscore</span> = false.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>service: byte-as-an-octet</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>serviceId: {{asJavaId service}}
+package: {{asJavaId service camelCase=false underscore=true}}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>serviceId: byteAsAnOctet
+package: byte_as_an_octet</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 0.1.2-SNAPSHOT<br>
+</div>
+</div>
+</body>
+</html>
