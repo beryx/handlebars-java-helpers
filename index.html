@@ -39,6 +39,7 @@ hs.src = ('//s10.histats.com/js15_as.js');
 <li><a href="#helpers">Helpers</a>
 <ul class="sectlevel2">
 <li><a href="#_def">def</a></li>
+<li><a href="#_ifb">ifb</a></li>
 <li><a href="#_default">default</a></li>
 <li><a href="#_length">length</a></li>
 <li><a href="#_math">math</a></li>
@@ -125,6 +126,48 @@ You can contact me at {{email}}.</pre>
 <div class="content">
 <pre>Online: true
 You can contact me at jsmith@example.com.</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ifb">ifb</h3>
+<div class="paragraph">
+<p>Conditionally renders a block.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">#ifb</span> '<em>condition</em>'}} <em>text1</em> [{{<span class="purple">else</span>}} <em>text2</em>] {{/<span class="purple">ifb</span>}}</p>
+</div>
+<div class="paragraph">
+<p>Unlike the built-in <code>if</code> helper, <code>ifb</code> tries to parse string conditions as boolean values.
+Moreover, if a string condition can be parsed as a number, its corresponding numerical value is evaluated as a boolean (0 is false, anything else is true).
+This is especially helpful when the condition is provided as a subexpression.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>offline: false
+value: 5</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>if : online = {{#if (not offline)}}YES{{else}}NO{{/if}}
+ifb: online = {{#ifb (not offline)}}YES{{else}}NO{{/ifb}}
+if : {{value}} is an {{#if (math value '%' 2)}}odd{{else}}even{{/if}} number
+ifb: {{value}} is an {{#ifb (math value '%' 2)}}odd{{else}}even{{/ifb}} number</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>if : online = YES
+ifb: online = NO
+if : 4 is an odd number
+ifb: 4 is an even number</pre>
 </div>
 </div>
 </div>
@@ -278,11 +321,11 @@ penalty: 30</pre>
 <div class="title">Template</div>
 <div class="content">
 <pre>Exceeded allowed penalty: {{compare penalty '&gt;=' 50}}
-{{#if (compare bonus '&gt;' penalty)}}
+{{#ifb (compare bonus '&gt;' penalty)}}
 You won!
 {{else}}
 Game over
-{{/if}}</pre>
+{{/ifb}}</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -314,11 +357,11 @@ You won!</pre>
 <div class="title">Template</div>
 <div class="content">
 <pre>Online: {{not offline}}
-{{#if (not offline)}}
+{{#ifb (not offline)}}
 Invite a friend to play with you!
 {{else}}
 Single-player mode.
-{{/if}}</pre>
+{{/ifb}}</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -352,11 +395,11 @@ wheels: 2</pre>
 <div class="title">Template</div>
 <div class="content">
 <pre>airliner: {{and motorized aircraft}}
-{{#if (and motorized (not aircraft) (compare wheels '==' 2))}}
+{{#ifb (and motorized (not aircraft) (compare wheels '==' 2))}}
 You won a motorcycle!
 {{else}}
 Sorry, we only offer motorcycles.
-{{/if}}</pre>
+{{/ifb}}</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -390,11 +433,11 @@ accessLevel: 2</pre>
 <div class="title">Template</div>
 <div class="content">
 <pre>committer: {{or admin developer}}
-{{#if (or admin developer (compare accessLevel '&gt;=' 4))}}
+{{#ifb (or admin developer (compare accessLevel '&gt;=' 4))}}
 Click here to download the logs.
 {{else}}
 Sorry, you are not allowed to view the logs.
-{{/if}}</pre>
+{{/ifb}}</pre>
 </div>
 </div>
 <div class="listingblock">
