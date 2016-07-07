@@ -2,3 +2,5 @@
 = Introduction
 
 This library provides various https://github.com/jknack/handlebars.java[Handlebars.java] helpers
+
+NOTE: The source code is available on https://github.com/beryx/handlebars-java-helpers[GitHub].
