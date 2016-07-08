@@ -37,7 +37,7 @@ You can contact me at jsmith@example.com.
 == ifb
 Conditionally renders a block.
 
-*Syntax*: {{[purple]###ifb## '_condition_'}} _text1_ {startsb}{{[purple]##else##}} _text2_{endsb} {{/[purple]##ifb##}}
+*Syntax*: {{[purple]###ifb## _condition_}} _text1_ {startsb}{{[purple]##else##}} _text2_{endsb} {{/[purple]##ifb##}}
 
 Unlike the built-in `if` helper, `ifb` tries to parse string conditions as boolean values.
 Moreover, if a string condition can be parsed as a number, its corresponding numerical value is evaluated as a boolean (0 is false, anything else is true).
@@ -124,7 +124,7 @@ Computes the result of an arithmetic operation.
 
 *Syntax*: {{[purple]##math## _operand1_ _'operator'_ _operand2_  {startsb}[purple]##decimals##: _dec_ {startsb}[purple]##locale##: _loc_{endsb}{endsb}}}
 
-Supported operators: `+`, `-`, `*`, `/`, `%`, `**`.
+Supported operators: `+`, `-`, `\*`, `/`, `%`, `**`.
 
 
 *Example:*
@@ -172,7 +172,7 @@ Compares two operands using the specified relational operator.
 
 *Syntax*: {{[purple]##compare## _operand1_ _'operator'_ _operand2_}}
 
-Supported relational operators: `==`, `!=`, `<`, `<=`, `>`, `>=`.
+Supported relational operators: `==`, `!=`, `<`, `\<=`, `>`, `>=`.
 
 
 *Example:*
