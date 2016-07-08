@@ -147,7 +147,7 @@ You can contact me at jsmith@example.com.</pre>
 <p>Conditionally renders a block.</p>
 </div>
 <div class="paragraph">
-<p><strong>Syntax</strong>: {{<span class="purple">#ifb</span> '<em>condition</em>'}} <em>text1</em> [{{<span class="purple">else</span>}} <em>text2</em>] {{/<span class="purple">ifb</span>}}</p>
+<p><strong>Syntax</strong>: {{<span class="purple">#ifb</span> <em>condition</em>}} <em>text1</em> [{{<span class="purple">else</span>}} <em>text2</em>] {{/<span class="purple">ifb</span>}}</p>
 </div>
 <div class="paragraph">
 <p>Unlike the built-in <code>if</code> helper, <code>ifb</code> tries to parse string conditions as boolean values.
@@ -257,7 +257,7 @@ penalty = 0 points</pre>
 <p><strong>Syntax</strong>: {{<span class="purple">math</span> <em>operand1</em> <em>'operator'</em> <em>operand2</em>  [<span class="purple">decimals</span>: <em>dec</em> [<span class="purple">locale</span>: <em>loc</em>]]}}</p>
 </div>
 <div class="paragraph">
-<p>Supported operators: <code>+</code>, <code>-</code>, <code><strong></code>, <code>/</code>, <code>%</code>, <code></strong>*</code>.</p>
+<p>Supported operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>, <code>**</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example:</strong></p>
@@ -317,7 +317,7 @@ rate: 0.15</pre>
 <p><strong>Syntax</strong>: {{<span class="purple">compare</span> <em>operand1</em> <em>'operator'</em> <em>operand2</em>}}</p>
 </div>
 <div class="paragraph">
-<p>Supported relational operators: <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&#8656;</code>, <code>&gt;</code>, <code>&gt;=</code>.</p>
+<p>Supported relational operators: <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example:</strong></p>
