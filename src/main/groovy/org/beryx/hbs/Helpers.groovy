@@ -152,7 +152,7 @@ enum Helpers implements Helper {
             chars.each {ch ->
                 if(Character.isJavaIdentifierPart(ch)) {
                     if((first && !Character.isJavaIdentifierStart(ch)) || (startNewPart && useUnderscore)) sb << '_'
-                    sb << (first ? ch.toLowerCase() : (startNewPart && useCamelCase) ? ch.toUpperCase() : ch)
+                    sb << (first ? ch.toLowerCase() : (startNewPart ? (useCamelCase ? ch.toUpperCase() : ch.toLowerCase()) : ch))
                     startNewPart = false
                     first= false
                 } else {
@@ -160,6 +160,25 @@ enum Helpers implements Helper {
                 }
             }
             buffer.append(sb.toString())
+        }
+        buffer
+    }),
+
+    JAVA_COMMENT("javaComment", { String commentFile, Options options ->
+        Options.Buffer buffer = options.buffer()
+
+        String comment = null
+        try {
+            comment = options.handlebars.loader.sourceAt(commentFile).content()
+        } catch (Exception e) {
+            log.debug "Comment file $commentFile not found (${options.handlebars.loader.resolve(commentFile)})"
+        }
+        if(comment) {
+            buffer.append('/*\n')
+            comment.eachLine { line ->
+                buffer.append(' * ').append(line).append('\n')
+            }
+            buffer.append(' */\n')
         }
         buffer
     })

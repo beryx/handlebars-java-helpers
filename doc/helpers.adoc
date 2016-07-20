@@ -315,3 +315,32 @@ package: {{asJavaId service camelCase=false underscore=true}}
 serviceId: byteAsAnOctet
 package: byte_as_an_octet
 ----
+
+
+== javaComment
+Inserts the content of a file as a Java comment.
+
+*Syntax*: {{[purple]##javaComment## _commentFile_}}
+
+*Example:*
+
+.Template
+----
+{{javaComment 'license-header.txt'}}
+public class A {}
+----
+
+.license-header.txt
+----
+This is public-domain software.
+Do whatever you want with it.
+----
+
+.Result
+----
+/*
+ * This is public-domain software.
+ * Do whatever you want with it.
+ */
+public class A {}
+----

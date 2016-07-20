@@ -8,7 +8,7 @@ plugins {
     id "com.github.ben-manes.versions" version "0.11.3"
     id "com.jfrog.bintray" version "1.6"
     id "org.asciidoctor.convert" version "1.5.3"
-    id 'org.ajoberstar.github-pages' version '1.5.0'
+    id 'org.ajoberstar.github-pages' version '1.5.1'
     id "com.github.hierynomus.license" version "0.12.1"
     id "net.saliman.properties" version "1.4.4"
     id 'com.gradle.build-receipt' version '1.0'
@@ -98,6 +98,7 @@ configurations {
 }
 
 license {
+    exclude '*.txt'
     header rootProject.file("license-header.txt")
     skipExistingHeaders true
     ignoreFailures false
@@ -105,6 +106,10 @@ license {
 
 signing {
     sign configurations.archives
+}
+
+def isPublishTask(task) {
+  task.name.startsWith('publish') && (task.name != 'publishGhPages')
 }
 
 signArchives {
@@ -177,6 +182,45 @@ def configureGroovydoc(task) {
 
 artifacts {
     (System.getenv("TRAVIS") == "true") ? archives(sourcesJar) : archives(sourcesJar, groovydocJar)
+}
+
+asciidoctor {
+  sourceDir = file("doc")
+  sources {include 'index.adoc'}
+  logDocuments = true
+  attributes 'source-highlighter': 'coderay',
+             'coderay-linenums-mode': 'table',
+             icons: 'font',
+             imagesdir: 'img',
+             'data-uri': '',
+             linkattrs: true,
+             linkcss: true
+}
+githubPages {
+  repoUri = 'https://github.com/beryx/handlebars-java-helpers.git'
+
+  credentials {
+    username = System.getenv('GH_PAGES_ACCESS_TOKEN')
+    password = ''
+  }
+
+  pages {
+    def pgType = project.hasProperty('ghPageType') ? ghPageType : 'latest'
+    if(pgType == 'init') {
+      from file("ghpages")
+    } else {
+      from file("${asciidoctor.outputDir.path}/html5")
+    }
+    def docDir = Boolean.valueOf(hbsHelpersReleaseBuild) ? 'releases' : 'snapshots'
+    if(pgType == 'init') {
+      into "."
+    } else if(pgType == 'version') {
+      publishGhPages.enabled = (docDir != 'snapshots')
+      into "$docDir/$hbsHelpersVersion"
+    } else {
+      into "$docDir/latest"
+    }
+  }
 }
 
 publishing {
@@ -275,35 +319,6 @@ ideaWorkspace {
   outputFile = file('hbsHelpers.iws')
 }
 
-asciidoctor {
-  sourceDir = file("doc")
-  sources {include 'index.adoc'}
-  logDocuments = true
-  attributes 'source-highlighter': 'coderay',
-             'coderay-linenums-mode': 'table',
-             icons: 'font',
-             'data-uri': '',
-             linkattrs: true,
-             linkcss: true
-}
-
-githubPages {
-  repoUri = 'https://github.com/beryx/handlebars-java-helpers.git'
-
-  credentials {
-    username = System.getenv('GH_PAGES_ACCESS_TOKEN')
-    password = ''
-  }
-
-  pages {
-    from file("${asciidoctor.outputDir.path}/html5")
-    from file('doc/CNAME')
-    if(!Boolean.valueOf(hbsHelpersReleaseBuild)) {
-      into "snapshots/$hbsHelpersVersion"
-    }
-  }
-}
-
 def readFromConsole(prompt) {
     readFromConsole('', prompt)
 }
@@ -333,10 +348,6 @@ def readFromConsole(header, prompt, isPassword) {
     } else {
         throw new GradleException("Cannot get console.")
     }
-}
-
-def isPublishTask(task) {
-  task.name.startsWith('publish') && (task.name != 'publishGhPages')
 }
 
 gradle.taskGraph.whenReady { taskGraph ->

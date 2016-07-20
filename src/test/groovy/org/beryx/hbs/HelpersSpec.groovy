@@ -362,4 +362,24 @@ class HelpersSpec extends Specification implements TestUtil {
         "'!!! 6 x 9 = 42'"                                  | '_6X942'
         "'!!! 6 x 9 = 42' camelCase=false underscore=true"  | '_6_x_9_42'
     }
+
+    def "javaComment should insert the commentFile"() {
+        given:
+        def template = """
+            {{javaComment 'This is public-domain software.'}}
+            public class A {}
+        """.stripIndent()
+
+        when:
+        def merged = merge(template, context)
+
+        then:
+        merged == '''
+            /*
+             * This is public-domain software.
+             */
+            public class A {}
+        '''.stripAll()
+
+    }
 }
