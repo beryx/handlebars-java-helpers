@@ -320,7 +320,7 @@ package: byte_as_an_octet
 == javaComment
 Inserts the content of a file as a Java comment.
 
-*Syntax*: {{[purple]##javaComment## _commentFile_}}
+*Syntax*: {{[purple]##javaComment## '_commentFile_'}}
 
 *Example:*
 
