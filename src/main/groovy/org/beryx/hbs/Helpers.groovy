@@ -21,8 +21,10 @@ import com.github.jknack.handlebars.Helper
 import com.github.jknack.handlebars.Options
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.FromAbstractTypeMethods
+import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.LocaleUtils
 
+@Slf4j
 enum Helpers implements Helper {
     DEF ("def", { varName, options ->
         Context ctx = options.context
