@@ -50,8 +50,8 @@ class DocExamplesSpec extends Specification implements TestUtil {
     def "doc example: ifb"() {
         given:
         def ctx = '''
-            offline: true
-            value: 4
+            offline: false
+            value: 5
         '''
         def template = '''
             if : online = {{#if (not offline)}}YES{{else}}NO{{/if}}
@@ -65,10 +65,10 @@ class DocExamplesSpec extends Specification implements TestUtil {
 
         then:
         merged == '''
-            if : online = YES
-            ifb: online = NO
-            if : 4 is an odd number
-            ifb: 4 is an even number
+            if : online = NO
+            ifb: online = YES
+            if : 5 is an even number
+            ifb: 5 is an odd number
         '''.stripAll()
     }
 

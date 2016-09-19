@@ -28,13 +28,15 @@ import org.apache.commons.lang3.LocaleUtils
 enum Helpers implements Helper {
     DEF ("def", { varName, options ->
         Context ctx = options.context
-        def val = (options.params.size() > 0) ? options.params[0] : options.fn()
+        def val = (options.params.size() > 0) ? options.prm(0) : options.fn()
+        varName = from(varName)
         ctx.combine(varName, val)
         options.buffer()
     }),
 
     IFB ("ifb", { value, options ->
         Options.Buffer buffer = options.buffer()
+        value = from(value)
         if(isNumber(value)) {
             value = asNumber(value)
         }
@@ -44,10 +46,10 @@ enum Helpers implements Helper {
 
     DEFAULT ("default", { value, options ->
         if(!(value instanceof Boolean) && Handlebars.Utils.isEmpty(value)) {
-            value = options.params[0]
+            value = options.prm(0)
         }
         Options.Buffer buffer = options.buffer()
-        buffer.append(String.valueOf(value))
+        buffer.append(String.valueOf(from(value)))
         buffer
     }),
 
@@ -59,8 +61,9 @@ enum Helpers implements Helper {
 
     COMPARE ("compare", { operand1, options ->
         Options.Buffer buffer = options.buffer()
-        def op = options.params[0]
-        def operand2 = options.params[1]
+        operand1 = from(operand1)
+        def op = options.prm(0)
+        def operand2 = options.prm(1)
 
         boolean asString = options.hash("asString", false)
         if(!asString && isNumber(operand1) && isNumber(operand2)) {
@@ -88,9 +91,9 @@ enum Helpers implements Helper {
 
     MATH ("math", { value, options ->
         Options.Buffer buffer = options.buffer()
-        def op = options.params[0]
-        def operand1 = asNumber(value)
-        def operand2 = asNumber(options.params[1])
+        def op = options.prm(0)
+        def operand1 = asNumber(from(value))
+        def operand2 = asNumber(options.prm(1))
 
         def cmp = {
             switch (op) {
@@ -116,15 +119,16 @@ enum Helpers implements Helper {
 
     NOT ("not", { value, options ->
         Options.Buffer buffer = options.buffer()
+        value = from(value)
         buffer.append(Boolean.toString(!asBoolean(value)))
         buffer
     }),
 
     AND ("and", { operand1, options ->
         Options.Buffer buffer = options.buffer()
-        boolean res = asBoolean(operand1)
+        boolean res = asBoolean(from(operand1))
         for(int i=0; res && (i < options.params.length); i++) {
-            res = asBoolean(options.params[i])
+            res = asBoolean(options.prm(i))
         }
         buffer.append(Boolean.toString(res))
         buffer
@@ -132,9 +136,9 @@ enum Helpers implements Helper {
 
     OR ("or", { operand1, options ->
         Options.Buffer buffer = options.buffer()
-        boolean res = asBoolean(operand1)
+        boolean res = asBoolean(from(operand1))
         for(int i=0; !res && (i < options.params.length); i++) {
-            res = asBoolean(options.params[i])
+            res = asBoolean(options.prm(i))
         }
         buffer.append(Boolean.toString(res))
         buffer
@@ -142,6 +146,7 @@ enum Helpers implements Helper {
 
     AS_JAVA_ID("asJavaId", { text, options ->
         Options.Buffer buffer = options.buffer()
+        text = from(text)
         if(!text) {
             buffer.append('_')
         } else {
@@ -186,6 +191,10 @@ enum Helpers implements Helper {
     })
 
 
+    static {
+        Options.metaClass.prm = { index -> from(delegate.params[index]) }
+    }
+
     final String helperName
     private final Closure<CharSequence> closure;
 
@@ -201,6 +210,14 @@ enum Helpers implements Helper {
 
     static void register(Handlebars handlebars) {
         Helpers.values().each { helper -> handlebars.registerHelper(helper.helperName, helper)}
+    }
+
+    private static from(param) {
+        if(param instanceof Options.NativeBuffer) {
+            param.writer.toString()
+        } else {
+            param
+        }
     }
 
     private static boolean asBoolean(value) {
