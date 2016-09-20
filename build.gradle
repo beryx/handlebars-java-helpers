@@ -185,6 +185,13 @@ asciidoctor {
              linkattrs: true,
              linkcss: true
 }
+
+task deleteGHPagesRepo(type: Delete) {
+   delete "${project.buildDir}/ghpages"
+}
+
+publishGhPages.dependsOn deleteGHPagesRepo
+
 githubPages {
   repoUri = 'https://github.com/beryx/handlebars-java-helpers.git'
 
@@ -199,6 +206,7 @@ githubPages {
       from file("ghpages")
     } else {
       from file("${asciidoctor.outputDir.path}/html5")
+      from file("build/docs")
     }
     def docDir = Boolean.valueOf(hbsHelpersReleaseBuild) ? 'releases' : 'snapshots'
     if(pgType == 'init') {
