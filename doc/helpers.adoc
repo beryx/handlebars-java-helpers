@@ -262,7 +262,7 @@ You won a motorcycle!
 == or
 Returns the logical _or_ of the operands.
 
-*Syntax*: {{[purple]##and## _val1_ _val2_ [_val3_ [...]] }}
+*Syntax*: {{[purple]##or## _val1_ _val2_ [_val3_ [...]] }}
 
 *Example:*
 
