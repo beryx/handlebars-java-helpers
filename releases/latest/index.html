@@ -29,7 +29,7 @@ hs.src = ('//s10.histats.com/js15_as.js');
 <h1>Handlebars.java Helpers</h1>
 <div class="details">
 <span id="author" class="author">Serban Iordache</span><br>
-<span id="revnumber">version 0.2.2</span>
+<span id="revnumber">version 0.3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -44,6 +44,7 @@ hs.src = ('//s10.histats.com/js15_as.js');
 <li><a href="#_length">length</a></li>
 <li><a href="#_math">math</a></li>
 <li><a href="#_compare">compare</a></li>
+<li><a href="#_asboolean">asBoolean</a></li>
 <li><a href="#_not">not</a></li>
 <li><a href="#_and">and</a></li>
 <li><a href="#_or">or</a></li>
@@ -87,14 +88,14 @@ The source code is available on <a href="https://github.com/beryx/handlebars-jav
 <pre class="nowrap">&lt;dependency&gt;
     &lt;groupId&gt;org.beryx&lt;/groupId&gt;
     &lt;artifactId&gt;handlebars-java-helpers&lt;/artifactId&gt;
-    &lt;version&gt;0.2.2&lt;/version&gt;
+    &lt;version&gt;0.3.0&lt;/version&gt;
 &lt;/dependency&gt;</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="nowrap">compile 'org.beryx:handlebars-java-helpers:0.2.2'</pre>
+<pre class="nowrap">compile 'org.beryx:handlebars-java-helpers:0.3.0'</pre>
 </div>
 </div>
 </div>
@@ -350,6 +351,44 @@ You won!</pre>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_asboolean">asBoolean</h3>
+<div class="paragraph">
+<p>Returns the boolean value of the operand.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">asBoolean</span> <em>value</em>}}</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>middleName: Maria
+debt: 0
+credit: 5</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>Has nickname: {{asBoolean nickname}}
+Has middle name: {{asBoolean middleName}}
+Has debt: {{asBoolean debt}}
+Has credit: {{asBoolean credit}}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>Has nickname: false
+Has middle name: true
+Has debt: false
+Has credit: true</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_not">not</h3>
 <div class="paragraph">
 <p>Returns the negated value of the operand.</p>
@@ -429,7 +468,7 @@ You won a motorcycle!</pre>
 <p>Returns the logical <em>or</em> of the operands.</p>
 </div>
 <div class="paragraph">
-<p><strong>Syntax</strong>: {{<span class="purple">and</span> <em>val1</em> <em>val2</em> [<em>val3</em> [&#8230;&#8203;]] }}</p>
+<p><strong>Syntax</strong>: {{<span class="purple">or</span> <em>val1</em> <em>val2</em> [<em>val3</em> [&#8230;&#8203;]] }}</p>
 </div>
 <div class="paragraph">
 <p><strong>Example:</strong></p>
@@ -538,7 +577,7 @@ public class A {}</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.2.2<br>
+Version 0.3.0<br>
 </div>
 </div>
 </body>
