@@ -232,6 +232,38 @@ class HelpersSpec extends Specification implements TestUtil {
     }
 
 
+    def "the boolean value of #value should be #boolVal"() {
+        given:
+        def template = "asBoolean: {{asBoolean $value}}"
+
+        when:
+        def merged = merge(template, context)
+
+        then:
+        merged == "asBoolean: $boolVal"
+
+        where:
+        value     | boolVal
+        "private" | false
+        "true"    | true
+        "'true'"  | true
+        "'TRUE'"  | true
+        "'tRuE'"  | true
+        "false"   | false
+        "'false'" | false
+        "'FALSE'" | false
+        "'fAlSe'" | false
+        "''"      | false
+        "' '"     | true
+        "zzz"     | false
+        "'zzz'"   | true
+        "'3.14'"  | true
+        "0"       | false
+        "'0'"     | true
+        "1"       | true
+        "'1'"     | true
+    }
+
     def "the negated value of #value should be #negated"() {
         given:
         def template = "not: {{not $value}}"

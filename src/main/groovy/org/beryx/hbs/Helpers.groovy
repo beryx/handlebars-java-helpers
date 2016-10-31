@@ -117,6 +117,13 @@ enum Helpers implements Helper {
         buffer
     }),
 
+    AS_BOOLEAN ("asBoolean", { value, options ->
+        Options.Buffer buffer = options.buffer()
+        value = from(value)
+        buffer.append(Boolean.toString(asBoolean(value)))
+        buffer
+    }),
+
     NOT ("not", { value, options ->
         Options.Buffer buffer = options.buffer()
         value = from(value)

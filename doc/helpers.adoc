@@ -200,6 +200,37 @@ You won!
 ----
 
 
+== asBoolean
+Returns the boolean value of the operand.
+
+*Syntax*: {{[purple]##asBoolean## _value_}}
+
+*Example:*
+
+.YAML Model
+----
+middleName: Maria
+debt: 0
+credit: 5
+----
+
+.Template
+----
+Has nickname: {{asBoolean nickname}}
+Has middle name: {{asBoolean middleName}}
+Has debt: {{asBoolean debt}}
+Has credit: {{asBoolean credit}}
+----
+
+.Result
+----
+Has nickname: false
+Has middle name: true
+Has debt: false
+Has credit: true
+----
+
+
 == not
 Returns the negated value of the operand.
 

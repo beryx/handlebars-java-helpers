@@ -177,6 +177,33 @@ class DocExamplesSpec extends Specification implements TestUtil {
         '''.stripAll()
     }
 
+    def "doc example: asBoolean"() {
+        given:
+        def ctx = '''
+            middleName: Maria
+            debt: 0
+            credit: 5
+        '''
+        def template = '''
+            Has nickname: {{asBoolean nickname}}
+            Has middle name: {{asBoolean middleName}}
+            Has debt: {{asBoolean debt}}
+            Has credit: {{asBoolean credit}}
+        '''
+
+        when:
+        def merged = merge(template, ctx)
+
+        then:
+        merged == '''
+            Has nickname: false
+            Has middle name: true
+            Has debt: false
+            Has credit: true
+        '''.stripAll()
+    }
+
+
     def "doc example: not"() {
         given:
         def ctx = '''
