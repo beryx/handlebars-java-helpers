@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.3">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
 <meta name="author" content="Serban Iordache">
 <title>Handlebars.java Helpers</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
    <!-- Histats.com  START  (aync)-->
 <script type="text/javascript">var _Hasync= _Hasync|| [];
@@ -49,6 +49,8 @@ hs.src = ('//s10.histats.com/js15_as.js');
 <li><a href="#_and">and</a></li>
 <li><a href="#_or">or</a></li>
 <li><a href="#_asjavaid">asJavaId</a></li>
+<li><a href="#_asurlpath">asUrlPath</a></li>
+<li><a href="#_asurlquery">asUrlQuery</a></li>
 <li><a href="#_javacomment">javaComment</a></li>
 </ul>
 </li>
@@ -256,7 +258,7 @@ penalty = 0 points</pre>
 <p>Computes the result of an arithmetic operation.</p>
 </div>
 <div class="paragraph">
-<p><strong>Syntax</strong>: {{<span class="purple">math</span> <em>operand1</em> <em>'operator'</em> <em>operand2</em>  [<span class="purple">decimals</span>: <em>dec</em> [<span class="purple">locale</span>: <em>loc</em>]]}}</p>
+<p><strong>Syntax</strong>: {{<span class="purple">math</span> <em>operand1</em> <em>'operator'</em> <em>operand2</em>  [<span class="purple">decimals</span>=<em>dec</em> [<span class="purple">locale</span>=<em>loc</em>]]}}</p>
 </div>
 <div class="paragraph">
 <p>Supported operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>, <code>**</code>.</p>
@@ -316,7 +318,7 @@ rate: 0.15</pre>
 <p>Compares two operands using the specified relational operator.</p>
 </div>
 <div class="paragraph">
-<p><strong>Syntax</strong>: {{<span class="purple">compare</span> <em>operand1</em> <em>'operator'</em> <em>operand2</em>}}</p>
+<p><strong>Syntax</strong>: {{<span class="purple">compare</span> <em>operand1</em> <em>'operator'</em> <em>operand2</em> [<span class="purple">asString</span>=<em>strBool</em>]}}</p>
 </div>
 <div class="paragraph">
 <p>Supported relational operators: <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>.</p>
@@ -348,6 +350,9 @@ Game over
 <pre>Exceeded allowed penalty: false
 You won!</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>If the operands are numeric you can enforce comparing them as strings by specifying <code>asString=true</code>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -506,7 +511,7 @@ Click here to download the logs.</pre>
 <p>Converts a value to a valid Java identifier.</p>
 </div>
 <div class="paragraph">
-<p><strong>Syntax</strong>: {{<span class="purple">asJavaId</span> <em>value</em> [<span class="purple">camelCase</span>: <em>ccBool</em>] [<span class="purple">underscore</span>: <em>usBool</em>]}}</p>
+<p><strong>Syntax</strong>: {{<span class="purple">asJavaId</span> <em>value</em> [<span class="purple">camelCase</span>=<em>ccBool</em>] [<span class="purple">underscore</span>=<em>usBool</em>]}}</p>
 </div>
 <div class="paragraph">
 <p>You can control the format of the generated Java identifier by specifying the values of the boolean flags <span class="purple">camelCase</span> and <span class="purple">underscore</span>.
@@ -533,6 +538,74 @@ package: {{asJavaId service camelCase=false underscore=true}}</pre>
 <div class="content">
 <pre>serviceId: byteAsAnOctet
 package: byte_as_an_octet</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_asurlpath">asUrlPath</h3>
+<div class="paragraph">
+<p>Encodes a string as the path part of a URL.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">asUrlPath</span> <em>value</em> [<span class="purple">ascii</span>=<em>aBool</em>]}}</p>
+</div>
+<div class="paragraph">
+<p>If the <span class="purple">ascii</span> flag is <code>true</code>, the string will be encoded so that it only contains characters in the US-ASCII charset.
+The default value of the <span class="purple">ascii</span> flag is <code>false</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>name: Mötley Crüe</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>Click &lt;a href="http://videos.example.org/{{asUrlPath name}}.mp4"&gt;here&lt;/a&gt; to download.
+
+Click &lt;a href="http://videos.example.org/{{asUrlPath name ascii=true}}.mp4"&gt;here&lt;/a&gt; to download.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>Click &lt;a href="http://videos.example.org/Mötley%20Crüe.mp4"&gt;here&lt;/a&gt; to download.
+
+Click &lt;a href="http://videos.example.org/M%C3%B6tley%20Cr%C3%BCe.mp4"&gt;here&lt;/a&gt; to download.</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_asurlquery">asUrlQuery</h3>
+<div class="paragraph">
+<p>Encodes a string as the query part of a URL.</p>
+</div>
+<div class="paragraph">
+<p><strong>Syntax</strong>: {{<span class="purple">asUrlQuery</span> <em>value</em>}}</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">YAML Model</div>
+<div class="content">
+<pre>url: http://www.example.org/news?id=101</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Template</div>
+<div class="content">
+<pre>Click &lt;a href="http://translate.example.org?url={{asUrlQuery url}}"&gt;here&lt;/a&gt; to translate the page.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>Click &lt;a href="http://translate.example.org?url=http%3A%2F%2Fwww.example.org%2Fnews%3Fid%3D101"&gt;here&lt;/a&gt; to translate the page.</pre>
 </div>
 </div>
 </div>
