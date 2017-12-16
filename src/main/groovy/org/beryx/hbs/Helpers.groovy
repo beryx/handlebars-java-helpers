@@ -24,11 +24,13 @@ import groovy.transform.stc.FromAbstractTypeMethods
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.LocaleUtils
 
+import java.nio.charset.StandardCharsets
+
 @Slf4j
 enum Helpers implements Helper {
     DEF ("def", { varName, options ->
         Context ctx = options.context
-        def val = (options.params.size() > 0) ? options.prm(0) : options.fn()
+        def val = (options.params.length > 0) ? options.prm(0) : options.fn()
         varName = from(varName)
         ctx.combine(varName, val)
         options.buffer()
@@ -64,7 +66,6 @@ enum Helpers implements Helper {
         operand1 = from(operand1)
         def op = options.prm(0)
         def operand2 = options.prm(1)
-
         boolean asString = options.hash("asString", false)
         if(!asString && isNumber(operand1) && isNumber(operand2)) {
             operand1 = operand1 as double
@@ -195,7 +196,29 @@ enum Helpers implements Helper {
             buffer.append(' */\n')
         }
         buffer
-    })
+    }),
+
+    AS_URL_PATH("asUrlPath", { path, options ->
+        Options.Buffer buffer = options.buffer()
+        path = from(path)
+        if(path) {
+            def uri = new URI(null, null, path, null, null)
+            boolean ascii = options.hash("ascii", false)
+            def encoded = ascii ? uri.toASCIIString() : uri.toString()
+            buffer.append(encoded)
+        }
+        buffer
+    }),
+
+    AS_URL_QUERY("asUrlQuery", { query, options ->
+        Options.Buffer buffer = options.buffer()
+        query = from(query)
+        if(query) {
+            def encoded = URLEncoder.encode(query, StandardCharsets.UTF_8.name())
+            buffer.append(encoded)
+        }
+        buffer
+    }),
 
 
     static {

@@ -304,6 +304,46 @@ class DocExamplesSpec extends Specification implements TestUtil {
     }
 
 
+    def "doc example: asUrlPath"() {
+        given:
+        def ctx = '''
+            name: Mötley Crüe
+        '''
+        def template = '''
+            Click <a href="http://videos.example.org/{{asUrlPath name}}.mp4">here</a> to download.
+            Click <a href="http://videos.example.org/{{asUrlPath name ascii=true}}.mp4">here</a> to download.
+        '''
+
+        when:
+        def merged = merge(template, ctx)
+
+        then:
+        merged == '''
+            Click <a href="http://videos.example.org/Mötley%20Crüe.mp4">here</a> to download.
+            Click <a href="http://videos.example.org/M%C3%B6tley%20Cr%C3%BCe.mp4">here</a> to download.
+        '''.stripAll()
+    }
+
+
+    def "doc example: asUrlQuery"() {
+        given:
+        def ctx = '''
+            url: http://www.example.org/news?id=101
+        '''
+        def template = '''
+            Click <a href="http://translate.example.org?url={{asUrlQuery url}}">here</a> to translate the page.
+        '''
+
+        when:
+        def merged = merge(template, ctx)
+
+        then:
+        merged == '''
+            Click <a href="http://translate.example.org?url=http%3A%2F%2Fwww.example.org%2Fnews%3Fid%3D101">here</a> to translate the page.
+        '''.stripAll()
+    }
+
+
     def "README example: the fifteenth anniversary of a person born in #year was in a #res year"() {
         given:
         def ctx = "birthYear: $year"

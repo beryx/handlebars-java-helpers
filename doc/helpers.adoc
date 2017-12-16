@@ -122,7 +122,7 @@ Team size: 3 developers
 == math
 Computes the result of an arithmetic operation.
 
-*Syntax*: {{[purple]##math## _operand1_ _'operator'_ _operand2_  {startsb}[purple]##decimals##: _dec_ {startsb}[purple]##locale##: _loc_{endsb}{endsb}}}
+*Syntax*: {{[purple]##math## _operand1_ _'operator'_ _operand2_  {startsb}[purple]##decimals##=_dec_ {startsb}[purple]##locale##=_loc_{endsb}{endsb}}}
 
 Supported operators: `+`, `-`, `\*`, `/`, `%`, `**`.
 
@@ -170,7 +170,7 @@ interest: 37,50 EUR
 == compare
 Compares two operands using the specified relational operator.
 
-*Syntax*: {{[purple]##compare## _operand1_ _'operator'_ _operand2_}}
+*Syntax*: {{[purple]##compare## _operand1_ _'operator'_ _operand2_ {startsb}[purple]##asString##=_strBool_{endsb}}}
 
 Supported relational operators: `==`, `!=`, `<`, `\<=`, `>`, `>=`.
 
@@ -199,6 +199,7 @@ Exceeded allowed penalty: false
 You won!
 ----
 
+If the operands are numeric you can enforce comparing them as strings by specifying `asString=true`.
 
 == asBoolean
 Returns the boolean value of the operand.
@@ -323,7 +324,7 @@ Click here to download the logs.
 == asJavaId
 Converts a value to a valid Java identifier.
 
-*Syntax*: {{[purple]##asJavaId## _value_ {startsb}[purple]##camelCase##: _ccBool_{endsb} {startsb}[purple]##underscore##: _usBool_{endsb}}}
+*Syntax*: {{[purple]##asJavaId## _value_ {startsb}[purple]##camelCase##=_ccBool_{endsb} {startsb}[purple]##underscore##=_usBool_{endsb}}}
 
 You can control the format of the generated Java identifier by specifying the values of the boolean flags [purple]##camelCase## and [purple]##underscore##.
 The default values are: [purple]##camelCase## = true and [purple]##underscore## = false.
@@ -345,6 +346,59 @@ package: {{asJavaId service camelCase=false underscore=true}}
 ----
 serviceId: byteAsAnOctet
 package: byte_as_an_octet
+----
+
+
+== asUrlPath
+Encodes a string as the path part of a URL.
+
+*Syntax*: {{[purple]##asUrlPath## _value_ {startsb}[purple]##ascii##=_aBool_{endsb}}}
+
+If the [purple]##ascii## flag is `true`, the string will be encoded so that it only contains characters in the US-ASCII charset.
+The default value of the [purple]##ascii## flag is `false`.
+
+*Example:*
+
+.YAML Model
+----
+name: Mötley Crüe
+----
+
+.Template
+----
+Click <a href="http://videos.example.org/{{asUrlPath name}}.mp4">here</a> to download.
+
+Click <a href="http://videos.example.org/{{asUrlPath name ascii=true}}.mp4">here</a> to download.
+----
+
+.Result
+----
+Click <a href="http://videos.example.org/Mötley%20Crüe.mp4">here</a> to download.
+
+Click <a href="http://videos.example.org/M%C3%B6tley%20Cr%C3%BCe.mp4">here</a> to download.
+----
+
+
+== asUrlQuery
+Encodes a string as the query part of a URL.
+
+*Syntax*: {{[purple]##asUrlQuery## _value_}}
+
+*Example:*
+
+.YAML Model
+----
+url: http://www.example.org/news?id=101
+----
+
+.Template
+----
+Click <a href="http://translate.example.org?url={{asUrlQuery url}}">here</a> to translate the page.
+----
+
+.Result
+----
+Click <a href="http://translate.example.org?url=http%3A%2F%2Fwww.example.org%2Fnews%3Fid%3D101">here</a> to translate the page.
 ----
 
 

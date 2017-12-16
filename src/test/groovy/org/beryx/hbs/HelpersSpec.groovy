@@ -414,4 +414,46 @@ class HelpersSpec extends Specification implements TestUtil {
         '''.stripAll()
 
     }
+
+    def "asUrlPath should convert'#path' to '#encoded'"() {
+        given:
+        def template = "{{asUrlPath $path}}"
+
+        when:
+        def merged = merge(template, context)
+
+        then:
+        merged == "$encoded"
+
+        where:
+        path                     | encoded
+        "''"                  | ''
+        "' '"                 | '%20'
+        "'/'"                 | '/'
+        "'/abc/def'"          | '/abc/def'
+        "'a and b'"           | 'a%20and%20b'
+        "'göögle'"            | 'göögle'
+        "'göögle' ascii=true" | 'g%C3%B6%C3%B6gle'
+    }
+
+    def "asUrlQuery should convert'#query' to '#encoded'"() {
+        given:
+        def template = "{{asUrlQuery $query}}"
+
+        when:
+        def merged = merge(template, context)
+
+        then:
+        merged == "$encoded"
+
+        where:
+        query                                                      | encoded
+        "''"                                                       | ''
+        "' '"                                                      | '+'
+        "'/'"                                                      | '%2F'
+        "'key1=val1&key2=val2'"                                    | 'key1%3Dval1%26key2%3Dval2'
+        "'url=http://www.example.org/doc?name=guide&page=3#intro'" | 'url%3Dhttp%3A%2F%2Fwww.example.org%2Fdoc%3Fname%3Dguide%26page%3D3%23intro'
+        "'göögle'"                                                 | 'g%C3%B6%C3%B6gle'
+    }
+
 }

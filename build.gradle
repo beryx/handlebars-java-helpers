@@ -5,13 +5,13 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id "com.github.ethankhall.semantic-versioning" version "1.1.0"
-    id "com.github.ben-manes.versions" version "0.13.0"
-    id "com.jfrog.bintray" version "1.7.1"
-    id "org.asciidoctor.convert" version "1.5.3"
-    id 'org.ajoberstar.github-pages' version '1.6.0-rc.1'
-    id "com.github.hierynomus.license" version "0.13.1"
-    id "net.saliman.properties" version "1.4.5"
-    id 'com.github.jk1.dependency-license-report' version '0.3.5'
+    id "com.github.ben-manes.versions" version "0.17.0"
+    id "com.jfrog.bintray" version "1.8.0"
+    id "org.asciidoctor.convert" version "1.5.7"
+    id 'org.ajoberstar.github-pages' version '1.7.2'
+    id "com.github.hierynomus.license" version "0.14.0"
+    id "net.saliman.properties" version "1.4.6"
+    id 'com.github.jk1.dependency-license-report' version '0.4.1'
 }
 
 project.version.with {
@@ -45,7 +45,7 @@ def pomConfig = {
     }
 }
 
-ext.groovyVersion = '2.4.7'
+ext.groovyVersion = '2.4.13'
 
 
 tasks.withType(Javadoc) {
@@ -107,19 +107,19 @@ signArchives {
 
 dependencies {
   compile "org.codehaus.groovy:groovy-all:$groovyVersion"
-  compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+  compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
   compile 'com.github.jknack:handlebars:4.0.6'
 
   provided 'com.google.code.findbugs:findbugs-annotations:3.0.1'
 
-  testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
-  testCompile 'org.yaml:snakeyaml:1.17'
-  testCompile('org.spockframework:spock-core:1.1-groovy-2.4-rc-2') {
+  testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+  testCompile 'org.yaml:snakeyaml:1.19'
+  testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
       exclude module: 'groovy-all'
   }
-  testCompile 'cglib:cglib-nodep:3.2.4'
-  testCompile 'org.objenesis:objenesis:2.4'
-  testCompile('com.athaydes:spock-reports:1.2.12') { transitive = false}
+  testCompile 'cglib:cglib-nodep:3.2.5'
+  testCompile 'org.objenesis:objenesis:2.6'
+  testCompile('com.athaydes:spock-reports:1.4.0') { transitive = false}
 
 }
 
