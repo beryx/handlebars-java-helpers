@@ -184,7 +184,7 @@ enum Helpers implements Helper {
 
         String comment = null
         try {
-            comment = options.handlebars.loader.sourceAt(commentFile).content()
+            comment = options.handlebars.loader.sourceAt(commentFile).content(StandardCharsets.UTF_8)
         } catch (Exception e) {
             log.debug "Comment file $commentFile not found (${options.handlebars.loader.resolve(commentFile)})"
         }

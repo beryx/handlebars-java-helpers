@@ -23,8 +23,11 @@ import com.github.jknack.handlebars.io.TemplateLoader
 import com.github.jknack.handlebars.io.TemplateSource
 import org.yaml.snakeyaml.Yaml
 
+import java.nio.charset.Charset
+
 trait TestUtil  {
     static class StringTemplateLoader implements TemplateLoader {
+        Charset charset
         static {
             String.metaClass.stripAll = { ->
                 delegate.stripIndent().trim().replaceAll('(?m)^\\s*$\\n', '')
@@ -33,7 +36,7 @@ trait TestUtil  {
 
         @Override TemplateSource sourceAt(String location) {
             new TemplateSource() {
-                @Override String content() { location }
+                @Override String content(Charset charset) { location }
                 @Override String filename() { "N/A" }
                 @Override long lastModified() { 0 }
             }

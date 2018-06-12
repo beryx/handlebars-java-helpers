@@ -108,7 +108,8 @@ signArchives {
 dependencies {
   compile "org.codehaus.groovy:groovy-all:$groovyVersion"
   compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-  compile 'com.github.jknack:handlebars:4.0.6'
+  compile 'com.github.jknack:handlebars:4.1.0'
+  compile 'org.apache.commons:commons-lang3:3.7'
 
   provided 'com.google.code.findbugs:findbugs-annotations:3.0.1'
 
